@@ -287,5 +287,67 @@ table tbody + tbody { border-top: 2px solid rgb(221, 221, 221); }
 <div  id='write'  class = 'is-node'><h1><a name='header-n0' class='md-header-anchor '></a>Sierpinski triangle</h1><pre spellcheck="false" class="md-fences md-end-block ty-contain-cm modeLoaded" lang=""><div class="CodeMirror cm-s-inner CodeMirror-wrap" lang=""><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 0px; left: 4px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" style="position: absolute; bottom: -1em; padding: 0px; width: 1000px; height: 1em; outline: none;"></textarea></div><div class="CodeMirror-scrollbar-filler" cm-not-content="true"></div><div class="CodeMirror-gutter-filler" cm-not-content="true"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 0px; margin-bottom: 0px; border-right-width: 0px; padding-right: 0px; padding-bottom: 0px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines" role="presentation"><div role="presentation" style="position: relative; outline: none;"><div class="CodeMirror-measure"><pre><span>xxxxxxxxxx</span></pre></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code" role="presentation" style=""><div class="CodeMirror-activeline" style="position: relative;"><div class="CodeMirror-activeline-background CodeMirror-linebackground"></div><div class="CodeMirror-gutter-background CodeMirror-activeline-gutter" style="left: 0px; width: 0px;"></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">1. Take three points in a plane to form a triangle, you need not draw it.</span></pre></div><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">2. Randomly select any point inside the triangle and consider that your current position.</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">3. Randomly select any one of the three vertex points.</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">4. Move half the distance from your current position to the selected vertex.</span></pre><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">5. Plot the current position.</span></pre><div class="" style="position: relative;"><pre class=" CodeMirror-line " role="presentation"><span role="presentation" style="padding-right: 0.1px;">6. Repeat from step 3.</span></pre></div></div></div></div></div></div><div style="position: absolute; height: 0px; width: 1px; border-bottom: 0px solid transparent; top: 182px;"></div><div class="CodeMirror-gutters" style="display: none; height: 182px;"></div></div></div></pre></div>
 </body>
 
-<script src="https://gist.githubusercontent.com/amicis31/e6dc7aa17486ca5d1edbde27ddd969a8/raw/00e0abfeb41183053eff93cd1eb15f579bcab923/sierpinski_1.js"></script>
+<script>
+function halfpoint(point_1, point_2){
+  return {
+    x: (point_1.x + point_2.x)/2.0 ,
+    y: (point_1.y + point_2.y)/2.0
+  }
+}
+const width = 400
+const height = width;
+
+const svg = d3.select("body")
+            .append("div")
+            .attr("style", "text-align: center; margin-bottom: 20px")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height)
+  
+let triangle = [
+    {
+      x: width/2,
+      y: 0
+    },
+    {
+      x: 0,
+      y: height
+    },
+    {
+      x: width,
+      y: height
+    }
+]
+  
+let data = [
+    {
+        x: Math.floor( Math.random() * (width + 1)),
+        y: Math.floor( Math.random() * (height + 1))    
+    }
+];
+
+
+function add_points(){
+  let v = triangle[ Math.floor(Math.random() * 3) ]
+  let last_point = data[data.length - 1]
+  let half = halfpoint(last_point, v)
+  data.push(half)
+  let circles = svg.selectAll("circle").data(data);
+  
+  circles
+      .enter()
+      .append("circle")
+        .attr("cx", d => d.x)
+        .attr("cy", d => d.y)
+        .attr("fill", "#000000")
+        .attr("r", 1);
+}
+
+(function timeout(it){
+    setTimeout(function(){
+      add_points();
+      if(--it) timeout(it)
+    }, 1);
+})(Infinity);
+</script>
 </html>
